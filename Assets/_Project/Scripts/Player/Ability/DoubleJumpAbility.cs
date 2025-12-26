@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DoubleJumpAbility : AbilityBase
 {
-    [SerializeField] private float _doubleJumpHeight = 1.5f;
+    [SerializeField] private float _doubleJumpHeight = 4f;
 
     private int _remainingJumps;
 

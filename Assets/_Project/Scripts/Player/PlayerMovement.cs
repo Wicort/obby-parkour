@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField, Min(0f)] private float _movementSpeed = 5f;
-    [SerializeField, Min(0f)] private float _jumpHeight = 2f;
+    [SerializeField, Min(0f)] private float _jumpHeight = 4f;
     [SerializeField, Min(0f)] private float _groundedBufferSeconds = 0.15f;
 
     [Header("Camera")]
