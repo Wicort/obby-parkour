@@ -70,6 +70,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleMovement()
     {
+        // Горизонтальное движение (без изменений)
         Vector3 horizontalMovement = Vector3.zero;
         if (_inputReceiver.Move != Vector2.zero && _cameraTransform != null)
         {
@@ -89,19 +90,29 @@ public class PlayerMovement : MonoBehaviour
         horizontalMovement += _externalImpulse;
         _externalImpulse = Vector3.zero;
 
+        // === ПРЫЖОК ===
         bool canJump = _characterController.isGrounded ||
                        _timeSinceLastGrounded <= _groundedBufferSeconds;
 
         if (_inputReceiver.JumpPressed && canJump)
         {
+            // Резкий взлёт: высокая начальная скорость
             _verticalVelocity = Mathf.Sqrt(2f * _jumpHeight * Mathf.Abs(Physics.gravity.y));
             _timeSinceLastGrounded = float.MaxValue;
         }
 
-        _verticalVelocity += Physics.gravity.y * Time.deltaTime;
+        // === ГРАВИТАЦИЯ ===
+        // Увеличенная гравитация для резкого падения
+        const float enhancedGravityMultiplier = 2.0f; // ← КЛЮЧЕВОЙ ПАРАМЕТР
+        float gravity = Physics.gravity.y * enhancedGravityMultiplier;
+
+        _verticalVelocity += gravity * Time.deltaTime;
+
+        // Сброс скорости при приземлении
         if (_characterController.isGrounded && _verticalVelocity < 0f)
             _verticalVelocity = 0f;
 
+        // Вертикальное перемещение
         Vector3 verticalMovement = Vector3.up * _verticalVelocity * Time.deltaTime;
         Vector3 totalMovement = horizontalMovement + verticalMovement;
         _characterController.Move(totalMovement);

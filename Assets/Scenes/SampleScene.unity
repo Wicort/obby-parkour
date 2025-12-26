@@ -134,7 +134,6 @@ GameObject:
   - component: {fileID: 201800248}
   - component: {fileID: 201800250}
   - component: {fileID: 201800251}
-  - component: {fileID: 201800252}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -222,7 +221,7 @@ MonoBehaviour:
   _cameraTransform: {fileID: 330585546}
   _animator: {fileID: 0}
   _movementSpeed: 5
-  _jumpHeight: 2
+  _jumpHeight: 4
   _groundedBufferSeconds: 0.15
   _mouseSensitivity: 0.15
   _verticalAngleLimits: {x: -20, y: 40}
@@ -251,7 +250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoubleJumpAbility
   _isEnabled: 1
-  _doubleJumpHeight: 2
+  _doubleJumpHeight: 4
 --- !u!114 &201800251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,24 +263,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28b1d0acb71551346b6adce16f9f5157, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DashAbility
-  _isEnabled: 0
+  _isEnabled: 1
   _dashDistance: 5
   _dashDuration: 0.2
---- !u!114 &201800252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 201800242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9010929a259f83d4b8e5508a37892053, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GlideAbility
-  _isEnabled: 1
-  _glideFallSpeed: 0.1
-  _horizontalGlideSpeed: 2
 --- !u!1 &269646811
 GameObject:
   m_ObjectHideFlags: 0
