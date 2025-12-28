@@ -25,7 +25,7 @@ public class PlayerInputReceiver : MonoBehaviour
 
     void OnDestroy() => _inputActions?.Dispose();
 
-    public void ConsumeJump() => JumpPressed = false;
-    public void ConsumeDash() => DashPressed = false;
+    public void ResetJump() => JumpPressed = false;
+    public void ResetDash() => DashPressed = false;
     public void ResetLookThisFrame() => LookDelta = Vector2.zero;
 }

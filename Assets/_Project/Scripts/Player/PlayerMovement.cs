@@ -26,15 +26,15 @@ public class PlayerMovement : MonoBehaviour
     private float _verticalRotation;
     private float _verticalVelocity;
     private float _timeSinceLastGrounded;
-    private Vector3 _externalImpulse = Vector3.zero;
+    private Vector3 _accumulatedImpulse = Vector3.zero;
 
     public bool IsGrounded => _characterController.isGrounded;
     public Transform CameraTransform => _cameraTransform;
 
     public void ApplyImpulse(Vector3 impulse)
     {
-        _verticalVelocity = impulse.y;
-        _externalImpulse += new Vector3(impulse.x, 0f, impulse.z);
+        _verticalVelocity += impulse.y;
+        _accumulatedImpulse += new Vector3(impulse.x, 0f, impulse.z);
     }
 
     void Awake()
@@ -63,14 +63,17 @@ public class PlayerMovement : MonoBehaviour
         HandleCamera();
         UpdateAnimator();
 
-        _inputReceiver.ConsumeJump();
-        _inputReceiver.ConsumeDash();
+        // СБРОС В КОНЦЕ КАДРА — КАК БЫЛО РАНЬШЕ
+        _inputReceiver.ResetJump();
+        _inputReceiver.ResetDash();
         _inputReceiver.ResetLookThisFrame();
+
+        // Сброс импульсов
+        _accumulatedImpulse = Vector3.zero;
     }
 
     void HandleMovement()
     {
-        // Горизонтальное движение (без изменений)
         Vector3 horizontalMovement = Vector3.zero;
         if (_inputReceiver.Move != Vector2.zero && _cameraTransform != null)
         {
@@ -87,32 +90,24 @@ public class PlayerMovement : MonoBehaviour
             horizontalMovement = moveDirection * _movementSpeed * Time.deltaTime;
         }
 
-        horizontalMovement += _externalImpulse;
-        _externalImpulse = Vector3.zero;
+        horizontalMovement += _accumulatedImpulse;
 
-        // === ПРЫЖОК ===
         bool canJump = _characterController.isGrounded ||
                        _timeSinceLastGrounded <= _groundedBufferSeconds;
 
         if (_inputReceiver.JumpPressed && canJump)
         {
-            // Резкий взлёт: высокая начальная скорость
             _verticalVelocity = Mathf.Sqrt(2f * _jumpHeight * Mathf.Abs(Physics.gravity.y));
             _timeSinceLastGrounded = float.MaxValue;
         }
 
-        // === ГРАВИТАЦИЯ ===
-        // Увеличенная гравитация для резкого падения
-        const float enhancedGravityMultiplier = 2.0f; // ← КЛЮЧЕВОЙ ПАРАМЕТР
+        const float enhancedGravityMultiplier = 2.0f;
         float gravity = Physics.gravity.y * enhancedGravityMultiplier;
-
         _verticalVelocity += gravity * Time.deltaTime;
 
-        // Сброс скорости при приземлении
         if (_characterController.isGrounded && _verticalVelocity < 0f)
             _verticalVelocity = 0f;
 
-        // Вертикальное перемещение
         Vector3 verticalMovement = Vector3.up * _verticalVelocity * Time.deltaTime;
         Vector3 totalMovement = horizontalMovement + verticalMovement;
         _characterController.Move(totalMovement);

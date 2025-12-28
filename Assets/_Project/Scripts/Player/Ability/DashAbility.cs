@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DashAbility : AbilityBase
 {
@@ -9,7 +9,7 @@ public class DashAbility : AbilityBase
     private float _dashTimer;
     private Vector3 _dashDirection;
 
-    protected void Update()
+    void Update()
     {
         if (!_isEnabled) return;
 
@@ -21,6 +21,7 @@ public class DashAbility : AbilityBase
 
             _isDashing = true;
             _dashTimer = _dashDuration;
+            // НЕ СБРАСЫВАЕМ DashPressed — это делает PlayerMovement
         }
 
         if (_isDashing)

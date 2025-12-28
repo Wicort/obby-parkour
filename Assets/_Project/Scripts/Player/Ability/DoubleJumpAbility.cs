@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DoubleJumpAbility : AbilityBase
 {
@@ -6,7 +6,7 @@ public class DoubleJumpAbility : AbilityBase
 
     private int _remainingJumps;
 
-    protected void Update()
+    void Update()
     {
         if (!_isEnabled) return;
 
@@ -20,6 +20,7 @@ public class DoubleJumpAbility : AbilityBase
             float verticalVelocity = Mathf.Sqrt(2f * _doubleJumpHeight * Mathf.Abs(Physics.gravity.y));
             _playerMovement.ApplyImpulse(Vector3.up * verticalVelocity);
             _remainingJumps--;
+            // НЕ СБРАСЫВАЕМ JumpPressed — это делает PlayerMovement
         }
     }
 }
