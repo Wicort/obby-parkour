@@ -27,14 +27,12 @@ public class CheckpointManager : MonoBehaviour
         RespawnPlayer();
     }
 
-    // Перегруженный метод: сохраняем и позицию, и поворот
     public void SetCurrentCheckpoint(Vector3 position, Quaternion rotation)
     {
         _currentCheckpointPosition = position;
         _currentCheckpointRotation = rotation;
     }
 
-    // Старый метод для обратной совместимости (если вызывается где-то напрямую)
     public void SetCurrentCheckpoint(Vector3 position)
     {
         SetCurrentCheckpoint(position, Quaternion.identity);
@@ -45,16 +43,13 @@ public class CheckpointManager : MonoBehaviour
         GameObject playerObject = GameObject.FindGameObjectWithTag(_playerTag);
         if (playerObject == null)
         {
-            Debug.LogError("Player not found! Make sure player has tag: " + _playerTag);
             return;
         }
 
-        // Применяем позицию и поворот
         Transform playerTransform = playerObject.transform;
         playerTransform.position = _currentCheckpointPosition;
         playerTransform.rotation = _currentCheckpointRotation;
 
-        // Если используется CharacterController — пересоздаём его состояние
         CharacterController cc = playerObject.GetComponent<CharacterController>();
         if (cc != null)
         {
@@ -63,8 +58,6 @@ public class CheckpointManager : MonoBehaviour
             playerTransform.rotation = _currentCheckpointRotation;
             cc.enabled = true;
         }
-
-        Debug.Log($"Player respawned at: {_currentCheckpointPosition}, rotation: {_currentCheckpointRotation.eulerAngles}");
     }
 
     public static void OnPlayerDeath()

@@ -20,7 +20,6 @@ public class DoubleJumpAbility : AbilityBase
             float verticalVelocity = Mathf.Sqrt(2f * _doubleJumpHeight * Mathf.Abs(Physics.gravity.y));
             _playerMovement.ApplyImpulse(Vector3.up * verticalVelocity);
             _remainingJumps--;
-            // НЕ СБРАСЫВАЕМ JumpPressed — это делает PlayerMovement
         }
     }
 }

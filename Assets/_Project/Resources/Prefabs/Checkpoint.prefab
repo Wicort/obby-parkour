@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 1982658016684201184}
   - component: {fileID: 2491459868322073447}
   - component: {fileID: 4826723134946870901}
-  - component: {fileID: 472050153537117464}
-  - component: {fileID: 604005403795061857}
-  - component: {fileID: 2592562183966633200}
-  m_Layer: 0
+  - component: {fileID: 4118869514242373926}
+  - component: {fileID: 5840451425005300038}
+  m_Layer: 6
   m_Name: Checkpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,28 +92,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &472050153537117464
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 239069208482855643}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1.6865339, z: 1}
-  m_Center: {x: 0, y: 0.34326524, z: 0}
---- !u!114 &604005403795061857
+--- !u!114 &4118869514242373926
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -128,7 +106,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Checkpoint
   _isActivated: 0
   _renderer: {fileID: 4826723134946870901}
---- !u!65 &2592562183966633200
+  _activatedColor: {r: 0.40392157, g: 0.7921569, b: 0.3254902, a: 0}
+--- !u!65 &5840451425005300038
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

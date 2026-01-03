@@ -28,7 +28,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
-        _currentHealth = _maxHealth; // восстановление при возрождении
+        _currentHealth = _maxHealth; 
         CheckpointManager.OnPlayerDeath();
     }
 

@@ -21,7 +21,6 @@ public class DashAbility : AbilityBase
 
             _isDashing = true;
             _dashTimer = _dashDuration;
-            // НЕ СБРАСЫВАЕМ DashPressed — это делает PlayerMovement
         }
 
         if (_isDashing)

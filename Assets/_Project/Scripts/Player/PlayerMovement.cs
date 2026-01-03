@@ -10,7 +10,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     [SerializeField, Min(0f)] private float _movementSpeed = 5f;
     [SerializeField, Min(0f)] private float _jumpHeight = 4f;
-    [SerializeField, Min(0f)] private float _groundedBufferSeconds = 0.15f;
+    [SerializeField] private Transform _groundPoint;
+    [SerializeField, Min(0f)] private float _groundCheckDistance = 0.1f;
+    [SerializeField] private LayerMask _groundLayer; 
 
     [Header("Camera")]
     [SerializeField, Range(0.01f, 1f)] private float _mouseSensitivity = 0.15f;
@@ -25,10 +27,10 @@ public class PlayerMovement : MonoBehaviour
 
     private float _verticalRotation;
     private float _verticalVelocity;
-    private float _timeSinceLastGrounded;
+    private bool _isGrounded;
     private Vector3 _accumulatedImpulse = Vector3.zero;
 
-    public bool IsGrounded => _characterController.isGrounded;
+    public bool IsGrounded => CheckGround();
     public Transform CameraTransform => _cameraTransform;
 
     public void ApplyImpulse(Vector3 impulse)
@@ -37,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         _accumulatedImpulse += new Vector3(impulse.x, 0f, impulse.z);
     }
 
-    void Awake()
+    private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
         _inputReceiver = GetComponent<PlayerInputReceiver>();
@@ -48,31 +50,46 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        // Убедитесь, что слой Ground выбран в Inspector
+        if (_groundLayer == 0)
+        {
+            Debug.LogWarning("Ground Layer not assigned! Please set it in Inspector.");
+        }
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    void Update()
+    private void Update()
     {
-        if (_characterController.isGrounded)
-            _timeSinceLastGrounded = 0f;
-        else
-            _timeSinceLastGrounded += Time.deltaTime;
+        _isGrounded = CheckGround(); 
 
         HandleMovement();
         HandleCamera();
         UpdateAnimator();
 
-        // СБРОС В КОНЦЕ КАДРА — КАК БЫЛО РАНЬШЕ
         _inputReceiver.ResetJump();
         _inputReceiver.ResetDash();
         _inputReceiver.ResetLookThisFrame();
-
-        // Сброс импульсов
         _accumulatedImpulse = Vector3.zero;
     }
 
-    void HandleMovement()
+    private bool CheckGround()
+    {
+        Collider[] colliders = Physics.OverlapSphere(_groundPoint.position, _groundCheckDistance, _groundLayer);
+
+        foreach(Collider collider in colliders)
+        {
+            if (collider.TryGetComponent(out Checkpoint checkpoint))
+            {
+                checkpoint.Activate();
+            }
+        }
+
+        return colliders.Length > 0;
+    }
+
+    private void HandleMovement()
     {
         Vector3 horizontalMovement = Vector3.zero;
         if (_inputReceiver.Move != Vector2.zero && _cameraTransform != null)
@@ -92,20 +109,16 @@ public class PlayerMovement : MonoBehaviour
 
         horizontalMovement += _accumulatedImpulse;
 
-        bool canJump = _characterController.isGrounded ||
-                       _timeSinceLastGrounded <= _groundedBufferSeconds;
-
-        if (_inputReceiver.JumpPressed && canJump)
+        if (_inputReceiver.JumpPressed && _isGrounded)
         {
             _verticalVelocity = Mathf.Sqrt(2f * _jumpHeight * Mathf.Abs(Physics.gravity.y));
-            _timeSinceLastGrounded = float.MaxValue;
         }
 
         const float enhancedGravityMultiplier = 2.0f;
         float gravity = Physics.gravity.y * enhancedGravityMultiplier;
         _verticalVelocity += gravity * Time.deltaTime;
 
-        if (_characterController.isGrounded && _verticalVelocity < 0f)
+        if (_isGrounded && _verticalVelocity < 0f)
             _verticalVelocity = 0f;
 
         Vector3 verticalMovement = Vector3.up * _verticalVelocity * Time.deltaTime;
@@ -113,7 +126,7 @@ public class PlayerMovement : MonoBehaviour
         _characterController.Move(totalMovement);
     }
 
-    void HandleCamera()
+    private void HandleCamera()
     {
         if (_inputReceiver.LookDelta == Vector2.zero || _cameraTransform == null) return;
 
@@ -126,12 +139,22 @@ public class PlayerMovement : MonoBehaviour
         _cameraTransform.localRotation = Quaternion.Euler(_verticalRotation, 0f, 0f);
     }
 
-    void UpdateAnimator()
+    private void UpdateAnimator()
     {
         if (_animator == null) return;
 
         _animator.SetFloat(StrafeHash, _inputReceiver.Move.x);
         _animator.SetFloat(ForwardHash, _inputReceiver.Move.y);
-        _animator.SetBool(IsGroundedHash, _characterController.isGrounded);
+
+        if (_animator.GetBool(IsGroundedHash) != _isGrounded)
+            _animator.SetBool(IsGroundedHash, _isGrounded);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_characterController == null) return;
+        _isGrounded = CheckGround();
+        Gizmos.color = _isGrounded ? Color.green : Color.red;
+        Gizmos.DrawWireSphere(_groundPoint.position, _groundCheckDistance);
     }
 }
